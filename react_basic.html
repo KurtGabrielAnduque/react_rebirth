@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+  </head>
+  <body>
+    <div class="js-container"></div>
+    <div class="another-cont"></div>
+
+    <hr>
+
+    <div class = 'exercise1'></div>
+
+    <hr>
+    <div class = 'exercise2'></div>
+
+    <script>
+        console.log('HI IM KURT')
+    </script>
+    <script src="/index.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react.js"></script>
+    <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
+    <script src="https://unpkg.com/supersimpledev/dayjs.js"></script>
+    <script src="https://unpkg.com/supersimpledev/babel.js"></script>
+    <script type="text/babel">
+      const button = <button>HELLO</button>;
+      const HEADER = <h1>IM KURT</h1>;
+      const button2 = <button>Good job!</button>;
+      const socks = 10;
+      const t_shirt = 8;
+
+      const div = (
+        <div>
+          <p>Cotton socks</p>
+          <p>Price:$10</p>
+          <button>Add to Cart</button>
+        </div>);
+
+      const total_price = <p>Product cost : ${socks+ (t_shirt*2)}</p>;
+      const date_display = <p>{dayjs().format('MMMM D')}</p>;
+
+      const container = document.querySelector('.js-container');
+      const container2 = document.querySelector('.another-cont');
+      const excer1cont = document.querySelector('.exercise1');
+      const excer2cont = document.querySelector('.exercise2');
+      
+      ReactDOM.createRoot(excer2cont).render(date_display);
+      ReactDOM.createRoot(excer1cont).render(button2);
+      ReactDOM.createRoot(excer1cont).render(div);
+      ReactDOM.createRoot(excer1cont).render(total_price);
+      ReactDOM.createRoot(container).render(button);
+      ReactDOM.createRoot(container2).render(HEADER);
+    </script>
+  </body>
+</html>

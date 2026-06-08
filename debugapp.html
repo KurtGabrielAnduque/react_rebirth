@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bug Tracker Project</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+
+  <body>
+    <div class="js-container"></div>
+
+    <script type="text/babel">
+        
+        // 1. BugInput Component
+        function BugInput({ bugs, setBugs }){
+          const [ enteredBug, setBug ] = React.useState('');
+          const [ enteredPriority, setPriority ] = React.useState('Low');
+          
+          function inputBug(event){
+            setBug(event.target.value);
+          }
+
+          function inputPriority(event){
+            setPriority(event.target.value);
+          }
+
+          function sendBug(){
+             const updatedBug = [...bugs, {
+              id : crypto.randomUUID(),
+              bugType: enteredBug,
+              priority: enteredPriority,
+              //since all new found bugs are not process instantly
+              state: 'Queue'
+             }
+             ];
+
+             setBugs(updatedBug);
+
+             setBug('');
+             setPriority('');
+          }
+          
+          return(
+            <>
+              <div style ={{display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '30px'}}>
+                  <input 
+                    type = "text" 
+                    placeholder = "Report a bug here"
+                    // our system must be aware of every value entered by user
+                    onChange = {inputBug}
+                    // the value itself
+                    value = {enteredBug}
+                  />
+
+                <div style={{display: 'flex', flexDirection: 'row', padding : '5px',}}>
+                  <p>priority: </p>
+                  {/* the value = (it is the intial value set by the system) 
+                    the onchange affect the new value base on the function used 
+                    basically selecting in drop down menu*/}
+                  <select value = {enteredPriority} onChange= {inputPriority}>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>  
+                </div>
+
+                {/*it takes the function for sendBug since we are adding new bug*/}
+                <button onClick = {sendBug}>
+
+                  Submit Bug!
+                </button>
+              </div>
+
+              <hr/>
+            </>
+
+            
+            
+          );
+        }
+
+
+        // 2. BugItem Component
+        function BugDisplayDesign ({bugType, priority}){
+
+          return(
+            <>
+              <div style= {{textAlign: 'center'}}>
+                <h1>{bugType}</h1>
+                <p>{priority}</p>
+              </div>
+            </>
+          );
+        }
+
+
+
+        // 3. DisplayBugs Component
+        function DisplayBug({ bugs, setBugs}){
+          
+          //function for deleting the complete state bug
+          function deleteBug(id){
+            setBugs((currentBugs) => {
+              return currentBugs.filter((bugs) => bugs.id !== id);
+            })
+          }
+          
+          //function for check if there is a fixed bug
+          function inputState(event, id){
+            if (event.target.value === 'Complete'){
+              return deleteBug(id);
+            }
+          }
+
+          const reportedBugs = bugs.map((bug) => {
+            return(
+              // it is a practice to have id in the outermost div of the every object
+              <div key = {bug.id}>
+                  {/* a function that is responsible for displaying bugs*/}
+                  <BugDisplayDesign
+                    bugType = {bug.bugType}
+                    priority = {bug.priority}
+                  />
+                  <div>
+                    <select onChange= {(event) => inputState(event, bug.id)}>
+                      <option value="Queue">Queue</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Complete">Complete</option>
+                    </select>
+                  </div>
+                  <hr/>
+              </div>
+            )
+          })
+
+          return(
+            <>
+              {reportedBugs}
+            </>
+          );
+        }
+
+
+        function App(){
+          const [bugs, setBugs] = React.useState([{
+            id : 'id1',
+            bugType: 'UI',
+            priority: 'medium',
+            state: 'incomplete'
+          }])
+            
+            return(
+                <>
+                  <h1 style={{textAlign: 'center'}}>Project Bug Tracker</h1>
+                  
+                  <BugInput
+                    bugs = {bugs}
+                    setBugs = {setBugs}
+                  />
+                  
+                  {/*Displaying bugs*/}
+                  <DisplayBug
+                    bugs = {bugs}
+                    setBugs = {setBugs}
+                  />
+
+
+
+                </>
+            );
+        }        
+
+        const container = document.querySelector('.js-container');
+        ReactDOM.createRoot(container).render(<App/>);
+    </script>
+  </body>
+</html>

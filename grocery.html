@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>React Basics</title>
+
+    <!-- This is the necessary script for React -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
+  </head>
+
+  <body>
+    <div class="js-container"></div>
+
+    <script type="text/babel">
+        
+        
+        function GroceriesInput({ groceries, setGroceries }){
+            const [ enteredGrocery, setGrocery] = React.useState('');
+            const [ enteredAmount, setAmount] = React.useState('');
+
+            function inputGroceries(event){
+                setGrocery(event.target.value);
+            }
+
+            function inputAmount(event){
+                setAmount(event.target.value);
+            }
+
+            function sendGrocery(){
+                const newGrocery = [
+                    ...groceries, {
+                    id : crypto.randomUUID(),
+                    itemName: enteredGrocery,
+                    amount: enteredAmount}
+                ];
+
+                setGroceries(newGrocery);
+
+                setGrocery('');
+                setAmount('');
+            }
+
+            return(
+                <>
+                    <input 
+                        type="text" 
+                        placeholder = "input grocery you want to list"
+                        onChange = {inputGroceries}
+                        value = {enteredGrocery}
+                    />
+
+                    <input 
+                        type="text" 
+                        placeholder = 'input amount'
+                        onChange = {inputAmount}
+                        value = {enteredAmount}
+                    />
+
+                    <button
+                        onClick = {sendGrocery}
+                    >
+                        List Now
+                    </button>
+                </>
+            );
+        }
+        
+
+        function GroceryList({ itemName, amount}){
+            return(
+                <>
+                    <div>
+                        <h1>{itemName}</h1>
+                    </div>
+                    <div>
+                        <h2>{amount}</h2>
+
+                    </div>
+                </>
+            );
+        }
+
+        function DisplayGrocery({ groceries, setGroceries }){
+            function deleteGrocery (id){
+                setGroceries((currentGroceries) => {
+                    return currentGroceries.filter((groceries) => groceries.id !== id);
+                })
+            }
+
+            const allGroceries = groceries.map((grocery) => {
+                return(
+                    <div key = {grocery.id}>
+                        <GroceryList
+                        itemName = {grocery.itemName}
+                        amount = {grocery.amount}
+                        />
+                        <button
+                            onClick = {() => deleteGrocery(grocery.id)}
+                        >delete</button>
+                    </div>
+                );
+            });
+
+            return(
+                <>
+                    {allGroceries}
+                </>
+            );
+        }
+
+        function App(){
+            const  [groceries, setGroceries] = React.useState([{
+                id : 'id1',
+                itemName: 'shoes',
+                amount: 5,
+            },{
+                id : 'id2',
+                itemName: 'keyboard',
+                amount: 10,
+            }]);
+
+            return(
+                <>
+                    <h1 style = {{textAlign: 'center'}}>HI WELCOME TO GROCERY LISTING PROJECT</h1>
+                    <GroceriesInput 
+                        groceries = {groceries}
+                        setGroceries = {setGroceries}
+                    />
+
+                    <DisplayGrocery  
+                        groceries = {groceries}
+                        setGroceries = {setGroceries}
+                    />
+                </>
+            );
+        }        
+
+        const container = document.querySelector('.js-container');
+
+        ReactDOM.createRoot(container).render(<App/>);
+    </script>
+  </body>
+</html>
