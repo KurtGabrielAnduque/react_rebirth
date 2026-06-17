@@ -2,230 +2,230 @@ import React from 'react'
 import './styles/EachPage/CheckoutPage.css'
 import './styles/EachPage/CheckoutPageHeader.css'
 import { Link } from 'react-router'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
+import dayjs from 'dayjs'
+
 import Logo from '../assets/images/logo.png'
 import MobileLogo from '../assets/images/mobile-logo.png'
 import CheckoutLockIcon from '../assets/images/icons/checkout-lock-icon.png'
+import money from '../utils/money'
 
-function CheckoutPage() {
-  return (
-    <>
-        <title>Checkout Page</title>
-        <link rel="icon" type="image/svg+xml" href="/images/cart-favicon.png" />
 
-        <div className = "checkout-header">
-            <div className = "header-content">
-                <div className = "checkout-header-left-section">
-                <Link to="/">
-                    <img className = "logo" src= {Logo} />
-                    <img className = "mobile-logo" src= { MobileLogo } />
-                </Link>
-                </div>
+function CartItemContainer({ dataCart, deliveryOptions }) {
 
-                <div className = "checkout-header-middle-section">
-                    Checkout (<Link className = "return-to-home-link"
-                        to="/">3 items</Link>)
-                </div>
+    return (
+        <>
+            {dataCart.map((cartproduct) => {
 
-                <div className = "checkout-header-right-section">
-                    <img src= {CheckoutLockIcon} />
+                let selectedDeliveryOption = deliveryOptions.find((deliveryOption) => {
+                    return deliveryOption.id === cartproduct.deliveryOptionId;
+                })
+
+                return (
+                    <div key={cartproduct.id} className="cart-item-container">
+                        <div className="delivery-date">
+                            Delivery date: {dayjs(selectedDeliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')}
+                        </div>
+
+                        <div className="cart-item-details-grid">
+                            <img className="product-image"
+                                src={cartproduct.product.image} />
+
+                            <div className="cart-item-details">
+                                <div className="product-name">
+                                    {cartproduct.product.name}
+                                </div>
+                                <div className="product-price">
+                                    {money(cartproduct.product.priceCents)}
+                                </div>
+                                <div className="product-quantity">
+                                    <span>
+                                        Quantity: <span className="quantity-label">{cartproduct.quantity}</span>
+                                    </span>
+                                    <span className="update-quantity-link link-primary">
+                                        Update
+                                    </span>
+                                    <span className="delete-quantity-link link-primary">
+                                        Delete
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="delivery-options">
+                                <div className="delivery-options-title">
+                                    Choose a delivery option:
+                                </div>
+
+                                {deliveryOptions.map((deliveryOption) => {
+                                    let priceString = 'FREE Shipping';
+
+                                    if (deliveryOption.priceCents > 0) {
+                                        priceString = `${money(deliveryOption.priceCents)} - Shipping`;
+                                    }
+
+                                    return (
+                                        <div key={deliveryOption.id} className="delivery-option">
+                                            <input type="radio"
+                                                checked={deliveryOption.id === cartproduct.deliveryOptionId}
+                                                className="delivery-option-input"
+                                                name={`delivery-option-${cartproduct.productId}`} />
+                                            <div>
+                                                <div className="delivery-option-date">
+                                                    {dayjs(deliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')}
+                                                </div>
+                                                <div className="delivery-option-price">
+                                                    {priceString}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                );
+            })}
+        </>
+
+    );
+}
+
+
+function CartSummary({ dataCart }) {
+    let totalQuantity = 0;
+    let total = 0;
+    let ShippingPrice = 0;
+
+
+    dataCart.forEach((cartItem) => {
+        totalQuantity += cartItem.quantity;
+        total += (cartItem.product.priceCents / 100) * cartItem.quantity;
+
+        if (cartItem.deliveryOptionId === '2') {
+            ShippingPrice += 4.99;
+        } else if (cartItem.deliveryOptionId === '3') {
+            ShippingPrice += 9.99;
+        }
+    })
+
+    let totalBeforeTax = total + ShippingPrice;
+    let estimatedTax = (ShippingPrice + total) * 0.1;
+    let OrderTotal = totalBeforeTax + estimatedTax;
+
+    return (
+        <>
+            <div className="payment-summary-title">
+                Payment Summary
+            </div>
+
+            <div className="payment-summary-row">
+                <div>Items ({totalQuantity}):</div>
+                <div className="payment-summary-money">${total.toFixed(2)}</div>
+            </div>
+
+            <div className="payment-summary-row">
+                <div>Shipping &amp; handling:</div>
+                <div className="payment-summary-money">${ShippingPrice.toFixed(2)}</div>
+            </div>
+
+            <div className="payment-summary-row subtotal-row">
+                <div>Total before tax:</div>
+                <div className="payment-summary-money">${totalBeforeTax.toFixed(2)}</div>
+            </div>
+
+            <div className="payment-summary-row">
+                <div>Estimated tax (10%):</div>
+                <div className="payment-summary-money">${estimatedTax.toFixed(2)}</div>
+            </div>
+
+            <div className="payment-summary-row total-row">
+                <div>Order total:</div>
+                <div className="payment-summary-money">${OrderTotal.toFixed(2)}</div>
+            </div>
+
+            <button className="place-order-button button-primary">
+                Place your order
+            </button>
+        </>
+    );
+}
+
+function CheckoutPage({ dataCart, setDataCart }) {
+
+    const [deliveryOptions, setDeliveryOption] = useState([]);
+
+    // mine
+    useEffect(() => {
+        const fetchDeliveryData = async () => {
+            try {
+                const responseDelivery = await axios.get('http://localhost:3000/api/delivery-options?expand=estimatedDeliveryTime');
+                setDeliveryOption(responseDelivery.data);
+
+
+            } catch (error) {
+                console.log(`Failed Fetch Data: ${error}`)
+            }
+        };
+
+        fetchDeliveryData();
+
+    }, [])
+
+
+    let orderQuantity = 0;
+    dataCart.forEach((cartItem) => {
+        orderQuantity += cartItem.quantity;
+    });
+
+
+    return (
+        <>
+            <title>Checkout Page</title>
+            <link rel="icon" type="image/svg+xml" href="/images/cart-favicon.png" />
+
+            <div className="checkout-header">
+                <div className="header-content">
+                    <div className="checkout-header-left-section">
+                        <Link to="/">
+                            <img className="logo" src={Logo} />
+                            <img className="mobile-logo" src={MobileLogo} />
+                        </Link>
+                    </div>
+
+                    <div className="checkout-header-middle-section">
+                        Checkout (<Link className="return-to-home-link"
+                            to="/">{orderQuantity} items</Link>)
+                    </div>
+
+                    <div className="checkout-header-right-section">
+                        <img src={CheckoutLockIcon} />
+                    </div>
                 </div>
             </div>
-            </div>
 
-            <div className = "checkout-page">
-            <div className = "page-title">Review your order</div>
+            <div className="checkout-page">
+                <div className="page-title">Review your order</div>
 
-            <div className = "checkout-grid">
-                <div className = "order-summary">
-                <div className = "cart-item-container">
-                    <div className = "delivery-date">
-                    Delivery date: Tuesday, June 21
+                <div className="checkout-grid">
+                    <div className="order-summary">
+
+
+                        <CartItemContainer
+                            dataCart={dataCart}
+                            deliveryOptions={deliveryOptions}
+                        />
+
+
                     </div>
 
-                    <div className = "cart-item-details-grid">
-                    <img className = "product-image"
-                        src="images/products/athletic-cotton-socks-6-pairs.jpg" />
-
-                    <div className = "cart-item-details">
-                        <div className = "product-name">
-                        Black and Gray Athletic Cotton Socks - 6 Pairs
-                        </div>
-                        <div className = "product-price">
-                        $10.90
-                        </div>
-                        <div className = "product-quantity">
-                        <span>
-                            Quantity: <span className = "quantity-label">2</span>
-                        </span>
-                        <span className = "update-quantity-link link-primary">
-                            Update
-                        </span>
-                        <span className = "delete-quantity-link link-primary">
-                            Delete
-                        </span>
-                        </div>
+                    <div className="payment-summary">
+                        <CartSummary dataCart={dataCart} />
                     </div>
-
-                    <div className = "delivery-options">
-                        <div className = "delivery-options-title">
-                        Choose a delivery option:
-                        </div>
-                        <div className = "delivery-option">
-                        <input type="radio" checked
-                            className = "delivery-option-input"
-                            name="delivery-option-1" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Tuesday, June 21
-                            </div>
-                            <div className = "delivery-option-price">
-                            FREE Shipping
-                            </div>
-                        </div>
-                        </div>
-                        <div className = "delivery-option">
-                        <input type="radio"
-                            className = "delivery-option-input"
-                            name="delivery-option-1" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Wednesday, June 15
-                            </div>
-                            <div className = "delivery-option-price">
-                            $4.99 - Shipping
-                            </div>
-                        </div>
-                        </div>
-                        <div className = "delivery-option">
-                        <input type="radio"
-                            className = "delivery-option-input"
-                            name="delivery-option-1" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Monday, June 13
-                            </div>
-                            <div className = "delivery-option-price">
-                            $9.99 - Shipping
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-
-                <div className = "cart-item-container">
-                    <div className = "delivery-date">
-                    Delivery date: Wednesday, June 15
-                    </div>
-
-                    <div className = "cart-item-details-grid">
-                    <img className = "product-image"
-                        src="images/products/intermediate-composite-basketball.jpg" />
-
-                    <div className = "cart-item-details">
-                        <div className = "product-name">
-                        Intermediate Size Basketball
-                        </div>
-                        <div className = "product-price">
-                        $20.95
-                        </div>
-                        <div className = "product-quantity">
-                        <span>
-                            Quantity: <span className = "quantity-label">1</span>
-                        </span>
-                        <span className = "update-quantity-link link-primary">
-                            Update
-                        </span>
-                        <span className = "delete-quantity-link link-primary">
-                            Delete
-                        </span>
-                        </div>
-                    </div>
-
-                    <div className = "delivery-options">
-                        <div className = "delivery-options-title">
-                        Choose a delivery option:
-                        </div>
-
-                        <div className = "delivery-option">
-                        <input type="radio" className = "delivery-option-input"
-                            name="delivery-option-2" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Tuesday, June 21
-                            </div>
-                            <div className = "delivery-option-price">
-                            FREE Shipping
-                            </div>
-                        </div>
-                        </div>
-                        <div className = "delivery-option">
-                        <input type="radio" checked className = "delivery-option-input"
-                            name="delivery-option-2" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Wednesday, June 15
-                            </div>
-                            <div className = "delivery-option-price">
-                            $4.99 - Shipping
-                            </div>
-                        </div>
-                        </div>
-                        <div className = "delivery-option">
-                        <input type="radio" className = "delivery-option-input"
-                            name="delivery-option-2" />
-                        <div>
-                            <div className = "delivery-option-date">
-                            Monday, June 13
-                            </div>
-                            <div className = "delivery-option-price">
-                            $9.99 - Shipping
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                </div>
-
-                <div className = "payment-summary">
-                    <div className = "payment-summary-title">
-                    Payment Summary
-                    </div>
-
-                    <div className = "payment-summary-row">
-                    <div>Items (3):</div>
-                    <div className = "payment-summary-money">$42.75</div>
-                    </div>
-
-                    <div className = "payment-summary-row">
-                    <div>Shipping &amp; handling:</div>
-                    <div className = "payment-summary-money">$4.99</div>
-                    </div>
-
-                    <div className = "payment-summary-row subtotal-row">
-                    <div>Total before tax:</div>
-                    <div className = "payment-summary-money">$47.74</div>
-                    </div>
-
-                    <div className = "payment-summary-row">
-                    <div>Estimated tax (10%):</div>
-                    <div className = "payment-summary-money">$4.77</div>
-                    </div>
-
-                    <div className = "payment-summary-row total-row">
-                    <div>Order total:</div>
-                    <div className = "payment-summary-money">$52.51</div>
-                    </div>
-
-                    <button className = "place-order-button button-primary">
-                    Place your order
-                    </button>
                 </div>
             </div>
-        </div>
-    </>
-  )
+        </>
+    )
 }
 
 export default CheckoutPage

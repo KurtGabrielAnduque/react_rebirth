@@ -5,6 +5,8 @@ import axios from 'axios';
 import './styles/EachPage/HomePage.css'
 import Headers from '../components/Headers'
 import CheckMark from '../assets/images/icons/checkmark.png'
+import money from '../utils/money';
+
 
 function ProductContainer({data}){
     if (data && data.length > 0){
@@ -20,7 +22,7 @@ function ProductContainer({data}){
                                     </div>
 
                                     <div className="product-name limit-text-to-2-lines">
-                                        Black and Gray Athletic Cotton Socks - 6 Pairs
+                                        {product.name}
                                     </div>
 
                                     <div className="product-rating-container">
@@ -32,7 +34,7 @@ function ProductContainer({data}){
                                     </div>
 
                                     <div className="product-price">
-                                        {`$${(product.priceCents/100).toFixed(2)}`}
+                                        {money(product.priceCents)}
                                     </div>
 
                                     <div className="product-quantity-container">
@@ -74,9 +76,9 @@ function ProductContainer({data}){
 }
 
 
-function HomePage() {
+function HomePage({dataCart, setDataCart}) {
     const [data, setData] = useState([]);
-    const [dataCart, setDataCart] = useState([]);
+    
     
     useEffect(() => {
         const fetchData = async () => {
@@ -89,18 +91,8 @@ function HomePage() {
             }
         };
 
-        const fetchDataCart = async () => {
-            try{
-                const responseCart = await axios.get('http://localhost:3000/api/cart-items');
-                setDataCart(responseCart.data);
-                
-            }catch (error){
-                console.log(`Error Fetching Dat: ${error}`);
-            }
-        }
-
         fetchData();
-        fetchDataCart();
+        
     }, []);
 
     return (
