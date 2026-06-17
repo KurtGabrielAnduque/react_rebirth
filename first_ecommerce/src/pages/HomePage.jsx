@@ -5,7 +5,6 @@ import axios from 'axios';
 import './styles/EachPage/HomePage.css'
 import Headers from '../components/Headers'
 import CheckMark from '../assets/images/icons/checkmark.png'
-import { products } from '../../starting-code/data/products'
 
 function ProductContainer({data}){
     if (data && data.length > 0){
@@ -77,6 +76,7 @@ function ProductContainer({data}){
 
 function HomePage() {
     const [data, setData] = useState([]);
+    const [dataCart, setDataCart] = useState([]);
     
     useEffect(() => {
         const fetchData = async () => {
@@ -89,7 +89,18 @@ function HomePage() {
             }
         };
 
+        const fetchDataCart = async () => {
+            try{
+                const responseCart = await axios.get('http://localhost:3000/api/cart-items');
+                setDataCart(responseCart.data);
+                
+            }catch (error){
+                console.log(`Error Fetching Dat: ${error}`);
+            }
+        }
+
         fetchData();
+        fetchDataCart();
     }, []);
 
     return (
@@ -99,7 +110,9 @@ function HomePage() {
 
 
             {/* Here we make the header into compnent instead to avoid repetition */}
-            <Headers />
+            <Headers 
+                dataCart={dataCart}
+            />
 
 
             <div className="home-page">

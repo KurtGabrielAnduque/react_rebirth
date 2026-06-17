@@ -1,12 +1,21 @@
 import React from 'react'
 import './Header.css'
-import { Link, NavLink } from 'react-router'
+import { data, Link, NavLink } from 'react-router'
 import LogoWhite from '../assets/images/logo-white.png'
 import MobileLogoWhite from '../assets/images/mobile-logo-white.png'
 import SearchIcon from '../assets/images/icons/search-icon.png'
 import CartIcon from '../assets/images/icons/cart-icon.png'
 
-function Headers() {
+
+function Headers({ dataCart }) {
+    let orderQuantity = 0;
+
+    dataCart.forEach((cartItem) =>{
+        orderQuantity += cartItem.quantity;
+    });
+    
+
+
   return (
     <>
         <div className = "header">
@@ -34,7 +43,7 @@ function Headers() {
 
                 <Link className = "cart-link header-link" to="/checkout">
                     <img className = "cart-icon" src= { CartIcon } />
-                    <div className = "cart-quantity">3</div>
+                    <div className = "cart-quantity">{orderQuantity}</div>
                     <div className = "cart-text">Cart</div>
                 </Link>
             </div>
