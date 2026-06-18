@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router'
 import './App.css'
-import HomePage from './pages/HomePage'
-import CheckoutPage from './pages/CheckoutPage'
-import OrdersPage from './pages/OrdersPage'
-import TrackingPage from './pages/TrackingPage'
+import HomePage from './pages/Home/HomePage'
+import CheckoutPage from './pages/Checkout/CheckoutPage'
+import OrdersPage from './pages/Order/OrdersPage'
+import TrackingPage from './pages/Tracking/TrackingPage'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
@@ -74,7 +74,10 @@ function App() {
                                           />}
         />
         
-        <Route path = '/tracking' element = { <TrackingPage/> }/>
+        <Route path = '/tracking' element = { <TrackingPage 
+                                                dataCart={dataCart}
+                                            />}
+        />
       </Routes>
     </>
   )

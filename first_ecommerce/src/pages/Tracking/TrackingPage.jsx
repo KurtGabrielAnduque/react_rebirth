@@ -1,9 +1,7 @@
-import React from 'react'
-import './styles/EachPage/TrackingPage.css'
-import Headers from '../components/Headers'
+import './styles/TrackingPage.css'
+import Headers from '../../components/Headers'
 
-
-function TrackingPage() {
+function TrackingPage({ dataCart }) {
   return (
     <>
         <title> Track Order Page</title>
@@ -11,7 +9,9 @@ function TrackingPage() {
         <link rel="icon" type="image/svg+xml" href="/images/tracking-favicon.png" />
 
         {/* Header component here */}
-        <Headers/>
+        <Headers 
+                dataCart={dataCart}
+            />
 
             <div className = "tracking-page">
             <div className = "order-tracking">
