@@ -154,7 +154,8 @@ function CartSummary({ dataCart }) {
 function CheckoutPage({ dataCart, setDataCart }) {
 
     const [deliveryOptions, setDeliveryOption] = useState([]);
-
+    const [isLoading, setisLoading] = useState(true);
+    
     // mine
     useEffect(() => {
         const fetchDeliveryData = async () => {
@@ -165,6 +166,8 @@ function CheckoutPage({ dataCart, setDataCart }) {
 
             } catch (error) {
                 console.log(`Failed Fetch Data: ${error}`)
+            }finally{
+                setisLoading(false);
             }
         };
 
@@ -172,6 +175,16 @@ function CheckoutPage({ dataCart, setDataCart }) {
 
     }, [])
 
+    
+    if (isLoading) {
+        return (
+            <>
+                <div className='loading-screen'>
+                    <h1>LOADING PLEASE WAIT</h1>
+                </div>
+            </>
+        );
+    }
 
     let orderQuantity = 0;
     dataCart.forEach((cartItem) => {

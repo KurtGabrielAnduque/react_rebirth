@@ -76,25 +76,8 @@ function ProductContainer({data}){
 }
 
 
-function HomePage({dataCart, setDataCart}) {
-    const [data, setData] = useState([]);
+function HomePage({dataCart, setDataCart, data, setData}) {
     
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                const response = await axios.get('http://localhost:3000/api/products');
-                setData(response.data);
-                
-            }catch (error){
-                console.log(`Error Fetching Data: ${error}`);
-            }
-        };
-
-        fetchData();
-        
-    }, []);
-
     return (
         <>
             <title>Ecommerce Project</title>
