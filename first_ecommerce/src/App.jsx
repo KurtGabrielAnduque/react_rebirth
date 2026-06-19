@@ -13,9 +13,7 @@ function App() {
   // for products api
   const [data, setData] = useState([]);
     
-    
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchData = async () => {
             try{
                 const response = await axios.get('http://localhost:3000/api/products');
                 setData(response.data);
@@ -23,16 +21,9 @@ function App() {
             }catch (error){
                 console.log(`Error Fetching Data: ${error}`);
             }
-        };
+        };  
 
-        fetchData();
-        
-    }, []);
-    
-    useEffect(() => {
-        
-
-        const fetchDataCart = async () => {
+    const loadCart = async () => {
             try{
                 const responseCart = await axios.get('http://localhost:3000/api/cart-items?expand=product');
                 setDataCart(responseCart.data);
@@ -43,8 +34,10 @@ function App() {
             }
         }
 
-        
-        fetchDataCart();
+
+    useEffect(() => {
+        fetchData();
+        loadCart();
     }, []);
 
   return (
@@ -58,12 +51,13 @@ function App() {
                                   setDataCart={setDataCart} 
                                   data={data} 
                                   setData={setData}
+                                  loadCart = {loadCart}
                                 />}
         />
 
 
         <Route path = '/checkout' element= {<CheckoutPage 
-                                              dataCart={dataCart} 
+                                              dataCart={dataCart}  // here the result of get??
                                               setDataCart={setDataCart} 
                                             />}
         />

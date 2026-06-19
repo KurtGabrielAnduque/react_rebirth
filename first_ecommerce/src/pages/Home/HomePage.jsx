@@ -4,7 +4,7 @@ import ProductContainer from './components/ProductContainer'
 
 
 
-function HomePage({dataCart, setDataCart, data, setData}) {
+function HomePage({dataCart, setDataCart, data, setData, loadCart}) {
     
     return (
         <>
@@ -17,11 +17,11 @@ function HomePage({dataCart, setDataCart, data, setData}) {
                 dataCart={dataCart}
             />
 
-
             <div className="home-page">
                 
                 <ProductContainer
                     data = {data}
+                    loadCart = {loadCart}
                 />
 
             </div>
