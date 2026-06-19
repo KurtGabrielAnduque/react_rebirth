@@ -2,8 +2,9 @@ import React from 'react'
 import dayjs from 'dayjs';
 import money from '../../../utils/money';
 import DeliveryOption from './DeliveryOption';
+import axios from 'axios';
 
-function CartItemContainer({ dataCart, deliveryOptions }) {
+function CartItemContainer({ dataCart, deliveryOptions, loadCart }) {
 
     return (
         <>
@@ -12,6 +13,15 @@ function CartItemContainer({ dataCart, deliveryOptions }) {
                 let selectedDeliveryOption = deliveryOptions.find((deliveryOption) => {
                     return deliveryOption.id === cartproduct.deliveryOptionId;
                 })
+                
+                const deleteItem = async () => {
+                    await axios.delete(`http://localhost:3000/api/cart-items/${cartproduct.productId}`,
+                        {
+                            productId : cartproduct.productId
+                        }
+                    );
+                    loadCart();
+                }
 
                 return (
                     <div key={cartproduct.id} className="cart-item-container">
@@ -37,7 +47,9 @@ function CartItemContainer({ dataCart, deliveryOptions }) {
                                     <span className="update-quantity-link link-primary">
                                         Update
                                     </span>
-                                    <span className="delete-quantity-link link-primary">
+                                    <span className="delete-quantity-link link-primary"
+                                        onClick={deleteItem}
+                                    >
                                         Delete
                                     </span>
                                 </div>
@@ -46,6 +58,7 @@ function CartItemContainer({ dataCart, deliveryOptions }) {
                             <DeliveryOption 
                                 deliveryOptions = {deliveryOptions} 
                                 cartproduct = {cartproduct}
+                                loadCart = {loadCart}
                             />
                             
                         </div>

@@ -13,7 +13,7 @@ import CartSummary from './components/CartSummary'
 
 
 
-function CheckoutPage({ dataCart, setDataCart }) {
+function CheckoutPage({ dataCart, setDataCart, loadCart }) {
 
     const [deliveryOptions, setDeliveryOption] = useState([]);
     const [isLoading, setisLoading] = useState(true);
@@ -89,13 +89,14 @@ function CheckoutPage({ dataCart, setDataCart }) {
                         <CartItemContainer
                             dataCart={dataCart}
                             deliveryOptions={deliveryOptions}
+                            loadCart = {loadCart}
                         />
 
 
                     </div>
 
                     <div className="payment-summary">
-                        <CartSummary dataCart={dataCart} />
+                        <CartSummary dataCart={dataCart} loadCart = {loadCart}/>
                     </div>
                 </div>
             </div>

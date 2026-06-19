@@ -59,6 +59,7 @@ function App() {
         <Route path = '/checkout' element= {<CheckoutPage 
                                               dataCart={dataCart}  // here the result of get??
                                               setDataCart={setDataCart} 
+                                              loadCart = {loadCart}
                                             />}
         />
 

@@ -1,4 +1,4 @@
-function CartSummary({ dataCart }) {
+function CartSummary({ dataCart, loadCart }) {
     let totalQuantity = 0;
     let total = 0;
     let ShippingPrice = 0;
