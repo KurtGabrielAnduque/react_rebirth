@@ -1,0 +1,41 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Makes sure it sits on top of everything else */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.button-container{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    justify-content: center;
+    gap: 20px;
+    padding: 5px;
+}
+
+button{
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: 30px;
+}

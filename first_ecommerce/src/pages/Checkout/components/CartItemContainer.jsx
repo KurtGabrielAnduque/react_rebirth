@@ -3,8 +3,11 @@ import dayjs from 'dayjs';
 import money from '../../../utils/money';
 import DeliveryOption from './DeliveryOption';
 import axios from 'axios';
+import Modal from './Modal';
+import { useState } from 'react';
 
 function CartItemContainer({ dataCart, deliveryOptions, loadCart }) {
+    const [modalOpen, setModalOpen] = useState(null);
 
     return (
         <>
@@ -44,9 +47,19 @@ function CartItemContainer({ dataCart, deliveryOptions, loadCart }) {
                                     <span>
                                         Quantity: <span className="quantity-label">{cartproduct.quantity}</span>
                                     </span>
-                                    <span className="update-quantity-link link-primary">
+                                    <span className="update-quantity-link link-primary" onClick={() => setModalOpen(cartproduct.productId)}>
                                         Update
                                     </span>
+                                    {
+                                        ( cartproduct.productId === modalOpen ) && 
+                                        (<Modal 
+                                            closeModal = {() => setModalOpen(null)}
+                                            loadCart = {loadCart}
+                                            productIdUpdate = {cartproduct.productId}
+                                            initialQuantity={cartproduct.quantity}
+                                        />)
+                                    }
+
                                     <span className="delete-quantity-link link-primary"
                                         onClick={deleteItem}
                                     >

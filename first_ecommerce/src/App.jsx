@@ -7,6 +7,8 @@ import TrackingPage from './pages/Tracking/TrackingPage'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
+window.axios = axios;
+
 function App() {
   // for cart api
   const [dataCart, setDataCart] = useState([]);
@@ -81,6 +83,7 @@ function App() {
                                               dataCart={dataCart} 
                                               ordersData={ordersData}
                                               setOrdersData={setOrdersData}
+                                              loadCart = {loadCart}
                                           />}
         />
         

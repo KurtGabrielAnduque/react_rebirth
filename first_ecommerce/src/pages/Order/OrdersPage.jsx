@@ -5,7 +5,7 @@ import Headers from '../../components/Headers'
 import DisplayOrders from './components/DisplayOrders'
 
 
-function OrdersPage({ dataCart, ordersData, setOrdersData}) {
+function OrdersPage({ dataCart, ordersData, setOrdersData, loadCart}) {
     
     return (
         <>
@@ -19,7 +19,11 @@ function OrdersPage({ dataCart, ordersData, setOrdersData}) {
                 <div className="page-title">Your Orders</div>
 
                 <div className="orders-grid">
-                    <DisplayOrders ordersData={ordersData} setOrdersData={setOrdersData} />
+                    <DisplayOrders 
+                        ordersData={ordersData} 
+                        setOrdersData={setOrdersData} 
+                        loadCart = {loadCart}
+                    />
                 </div>
             </div>
         </>
