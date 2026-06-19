@@ -1,4 +1,9 @@
-function CartSummary({ dataCart, loadCart }) {
+import axios from "axios";
+import { useNavigate } from "react-router";
+
+function CartSummary({ dataCart, loadCart, ordersData, ordersFetchData }) {
+    const navigate = useNavigate();
+    
     let totalQuantity = 0;
     let total = 0;
     let ShippingPrice = 0;
@@ -18,6 +23,13 @@ function CartSummary({ dataCart, loadCart }) {
     let totalBeforeTax = total + ShippingPrice;
     let estimatedTax = (ShippingPrice + total) * 0.1;
     let OrderTotal = totalBeforeTax + estimatedTax;
+
+    const placeOrder = async () => {
+        await axios.post('http://localhost:3000/api/orders');
+        await ordersFetchData();
+        await loadCart();
+        navigate('/orders');
+    }
 
     return (
         <>
@@ -50,7 +62,9 @@ function CartSummary({ dataCart, loadCart }) {
                 <div className="payment-summary-money">${OrderTotal.toFixed(2)}</div>
             </div>
 
-            <button className="place-order-button button-primary">
+            <button className="place-order-button button-primary"
+                onClick={placeOrder}
+            >
                 Place your order
             </button>
         </>

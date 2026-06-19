@@ -5,23 +5,8 @@ import Headers from '../../components/Headers'
 import DisplayOrders from './components/DisplayOrders'
 
 
-function OrdersPage({ dataCart, data }) {
-    const [ordersData, setOrdersData] = useState([]);
-
-    useEffect(() => {
-
-        let ordersFetchData = async () => {
-            try {
-                let response = await axios.get('http://localhost:3000/api/orders?expand=products');
-                setOrdersData(response.data);
-
-            } catch (error) {
-                console.log(`Failed Data Fetch: ${error}`);
-            }
-        };
-        ordersFetchData();
-    }, [])
-
+function OrdersPage({ dataCart, ordersData, setOrdersData}) {
+    
     return (
         <>
             <title>Order Page</title>

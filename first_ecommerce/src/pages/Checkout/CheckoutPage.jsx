@@ -13,7 +13,7 @@ import CartSummary from './components/CartSummary'
 
 
 
-function CheckoutPage({ dataCart, setDataCart, loadCart }) {
+function CheckoutPage({ dataCart, setDataCart, loadCart, ordersData, ordersFetchData }) {
 
     const [deliveryOptions, setDeliveryOption] = useState([]);
     const [isLoading, setisLoading] = useState(true);
@@ -96,7 +96,11 @@ function CheckoutPage({ dataCart, setDataCart, loadCart }) {
                     </div>
 
                     <div className="payment-summary">
-                        <CartSummary dataCart={dataCart} loadCart = {loadCart}/>
+                        <CartSummary 
+                            dataCart={dataCart} 
+                            loadCart = {loadCart} // hindi nagamit kasi nag front end computation tayo
+                            ordersFetchData = {ordersFetchData}
+                        />
                     </div>
                 </div>
             </div>

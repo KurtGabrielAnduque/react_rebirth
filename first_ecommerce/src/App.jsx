@@ -12,7 +12,9 @@ function App() {
   const [dataCart, setDataCart] = useState([]);
   // for products api
   const [data, setData] = useState([]);
-    
+  // for order
+  const [ordersData, setOrdersData] = useState([]);
+
     const fetchData = async () => {
             try{
                 const response = await axios.get('http://localhost:3000/api/products');
@@ -34,10 +36,20 @@ function App() {
             }
         }
 
+    const ordersFetchData = async () => {
+            try {
+                let response = await axios.get('http://localhost:3000/api/orders?expand=products');
+                setOrdersData(response.data);
+
+            } catch (error) {
+                console.log(`Failed Data Fetch: ${error}`);
+            }
+        };
 
     useEffect(() => {
         fetchData();
         loadCart();
+        ordersFetchData();
     }, []);
 
   return (
@@ -60,12 +72,15 @@ function App() {
                                               dataCart={dataCart}  // here the result of get??
                                               setDataCart={setDataCart} 
                                               loadCart = {loadCart}
+                                              ordersData = {ordersData}
+                                              ordersFetchData = {ordersFetchData}
                                             />}
         />
 
         <Route path = '/orders' element = {<OrdersPage 
                                               dataCart={dataCart} 
-                                              data={data}
+                                              ordersData={ordersData}
+                                              setOrdersData={setOrdersData}
                                           />}
         />
         
